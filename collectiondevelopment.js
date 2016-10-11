@@ -24,7 +24,10 @@ var validation = (function() {
 
     var notFromAmazon = function(field) {
         /**
-        * Whether 
+        * Check for markers of an Amazon address and return True if they're not there
+        * Doing it this way makes call later cleaner by not having to negate it in the call
+        * i.e. prefer notFromAmazon() to !fromAmazon().
+        *
         * @param {string} field  Input from the form field
         * @return {boolean} Whether the input is an Amazon address
         */
@@ -143,7 +146,8 @@ var reporting = (function() {
             unexpectedError: unexpectedError,
             showMessageContainer: showMessageContainer,
             hideMessageContainer: hideMessageContainer,
-            messageContainer: messageContainer};
+            messageContainer: messageContainer,
+            reportErrors: reportErrors};
 })();
 
 
@@ -316,8 +320,8 @@ $('#add_to_spreadsheet').submit(function(e) {
     reporting.hideMessageContainer();
 
     var isInvalidEntry = validation.invalidEntry(fieldVal);
-    if (invalidEntry) {
-        reporting.reportErrors([invalidEntry]);
+    if (isInvalidEntry) {
+        reporting.reportErrors({messages: [isInvalidEntry]});
         return false;
     } else if (validation.ISBNLike(fieldVal)) {
         //Strip hyphens just to make it easier on server side
