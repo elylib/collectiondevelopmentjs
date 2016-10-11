@@ -150,10 +150,6 @@ var reporting = (function() {
 
 var fund = (function () {
 
-    var chartArea = document.getElementById('funds-chart');
-    var goals = document.getElementById('goals');
-    var fundInfo = document.getElementById('fund-data');
-    var fundCode = $('#add_fund_code').val();
     var colorMap = {
         allocated: '#000',
         expended: '#AF5F0B',
@@ -164,7 +160,7 @@ var fund = (function () {
     var displayOrder = ['remaining', 'expended', 'encumbered'];
 
 
-    var getFundInfo = function() {
+    var getFundInfo = function(fundCode) {
         return $.ajax({
             url: 'https://collectiondevelopment.herokuapp.com/get_fund',
             type: 'GET',
@@ -227,7 +223,7 @@ var fund = (function () {
         };
     };
 
-    var createChart = function(fundData) {
+    var createChart = function(fundData, chartArea) {
         return new Chart(chartArea, {
             type: chartType,
             animation: {
@@ -246,11 +242,11 @@ var fund = (function () {
         return '<h3>January Goal</h3><p>&#37;'+percentage(fundData.allocated, (fundData.expended + fundData.encumbered))+' of &#37;70</p>';
     };
 
-    var showGoals = function(fundData) {
+    var showGoals = function(fundData, goals) {
         goals.innerHTML = setGoals(fundData);
     };
 
-    var showFundData = function(fundData) {
+    var showFundData = function(fundData, fundInfo) {
         fundInfo.innerHTML = makeLabels(fundData);
     };
 
@@ -264,11 +260,11 @@ var fund = (function () {
 })();
 
 var orderSubmission = (function() {
-    var submitOrder = function() {
+    var submitOrder = function(submitForm) {
         return $.ajax({
             url: 'https://collectiondevelopment.herokuapp.com/submit_order',
             type: 'GET',
-            data: $('#submit_order').serialize(),
+            data: submitForm.serialize(),
             beforeSend: function() {
                 showSpinner();
             }
@@ -280,11 +276,11 @@ var orderSubmission = (function() {
 
 var addItems = (function() {
 
-    var addToSheet = function() {
+    var addToSheet = function(addForm) {
         return $.ajax({
             url: 'https://collectiondevelopment-141220.appspot.com/add_to_spreadsheet/',
             type: 'GET',
-            data: $('#add_to_spreadsheet').serialize(),
+            data: addForm.serialize(),
             beforeSend: function() {
                 showSpinner();
             }
@@ -299,15 +295,17 @@ var addItems = (function() {
             stripHyphensFromISBN: stripHyphensFromISBN};
 })();
 
-var getFund = fund.getFundInfo();
+$(document).ready(function() {
+    var getFund = fund.getFundInfo($('#add_fund_code').val());
 
-getFund.done(function(data) {
-    fund.createChart(data);
-    fund.showFundData(data);
-    fund.showGoals(data);
-})
-.fail(reporting.unexpectedError)
-.always(hideSpinner);
+    getFund.done(function(data) {
+        fund.createChart(data, document.getElementById('funds-chart'));
+        fund.showFundData(data, document.getElementById('fund-data'));
+        fund.showGoals(data, document.getElementById('goals'));
+    })
+    .fail(reporting.unexpectedError)
+    .always(hideSpinner);
+});
 
 $('#add_to_spreadsheet').submit(function(e) {
     e.preventDefault();
@@ -317,28 +315,27 @@ $('#add_to_spreadsheet').submit(function(e) {
 
     reporting.hideMessageContainer();
 
-    // From validation, also make ISBN usable format
-    invalidEntry = validation.invalidEntry(fieldVal);
+    var isInvalidEntry = validation.invalidEntry(fieldVal);
     if (invalidEntry) {
         reporting.reportErrors([invalidEntry]);
         return false;
     } else if (validation.ISBNLike(fieldVal)) {
+        //Strip hyphens just to make it easier on server side
         theField.val(addItems.stripHyphensFromISBN(fieldVal));
     }
 
-    var addItemsToSheet = addItems.addToSheet();
+    var addItemsToSheet = addItems.addToSheet($(this));
     addItemsToSheet.
         then(reporting.checkForSuccess, reporting.unexpectedError).
         always(hideSpinner);
 });
-
 
 $('#submit_order').submit(function(e) {
     e.preventDefault();
 
     reporting.hideMessageContainer();
 
-    var submitOrder = orderSubmission.submitOrder();
+    var submitOrder = orderSubmission.submitOrder($(this));
     submitOrder.
         then(reporting.checkForSuccess, reporting.unexpectedError).
         always(hideSpinner);
