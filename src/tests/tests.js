@@ -6,9 +6,9 @@ QUnit.test('Test empty function true on empty', function(assert) {
 });
 
 QUnit.test('Test Amazon URL checker', function(assert) {
+    assert.ok(validation.notFromAmazon('google.com/anything'));
     assert.notOk(validation.notFromAmazon('amazon.com/anything'));
     assert.notOk(validation.notFromAmazon('amzn.com/anything'));
-    assert.ok(validation.notFromAmazon('google.com/anything'));
 });
 
 QUnit.test('Test ISBN format check', function(assert) {
@@ -21,18 +21,21 @@ QUnit.test('Test ISBN format check', function(assert) {
 });
 
 QUnit.test('Test ISBNLike', function(assert) {
-    assert.notOk(validation.ISBNLike('ax'), 'Any letter other than X');
     assert.ok(validation.ISBNLike('123-0123456789'));
     assert.ok(validation.ISBNLike('029812X'), 'Only digits and X');
     assert.ok(validation.ISBNLike('X'), 'Will be caught by ISBN check');
+    assert.notOk(validation.ISBNLike('ax'), 'Any letter other than X');
+    assert.notOk(validation.ISBNLike('012345678xa'), 'Any letter other than x');
 });
 
 QUnit.test('Put validation together', function(assert) {
-    assert.notOk(validation.invalidEntry('http://www.amazon.com/anything'), 'valid entry');
-    assert.notOk(validation.invalidEntry('https://amzn.com/anything'), 'valid entry');
+    // notOk and ok look backward because validation returns true if invalid
     assert.ok(validation.invalidEntry('google.com'), 'unsupported');
     assert.ok(validation.invalidEntry('029812X'), 'invalid ISBN');
     assert.ok(validation.invalidEntry('X'), 'invalid ISBN/unknown format');
+    assert.notOk(validation.invalidEntry('http://www.amazon.com/anything'), 'valid entry');
+    assert.notOk(validation.invalidEntry('https://amzn.com/anything'), 'valid entry');
+    assert.notOk(validation.invalidEntry('978-0123456789'), 'valid ISBN');
 });
 
 QUnit.module('Chart', {
