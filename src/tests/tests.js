@@ -59,3 +59,16 @@ QUnit.test('Test labels', function(assert) {
         '</ul>';
     assert.equal(fund.makeLabels(this.fundData), labels);
 });
+
+QUnit.module('Reporting', {
+    setup: function() {
+        this.data = {
+            success: false,
+            messages: ['This here is an error message']
+        }
+    }
+});
+
+QUnit.test('Test error reporting', function(assert) {
+    assert.equal(reporting.buildErrorMessage(this.data), '<p class="error-message">This here is an error message</p>');
+});

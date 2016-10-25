@@ -149,7 +149,8 @@ var reporting = (function() {
             showMessageContainer: showMessageContainer,
             hideMessageContainer: hideMessageContainer,
             messageContainer: messageContainer,
-            reportErrors: reportErrors};
+            reportErrors: reportErrors,
+            buildErrorMessage: buildErrorMessage};
 })();
 
 
@@ -300,15 +301,3 @@ var addItems = (function() {
     return {addToSheet: addToSheet,
             stripHyphensFromISBN: stripHyphensFromISBN};
 })();
-
-$(document).ready(function() {
-    var getFund = fund.getFundInfo($('#add_fund_code').val());
-
-    getFund.done(function(data) {
-        fund.createChart(data, document.getElementById('funds-chart'));
-        fund.showFundData(data, document.getElementById('fund-data'));
-        fund.showGoals(data, document.getElementById('goals'));
-    })
-    .fail(reporting.unexpectedError)
-    .always(hideSpinner);
-});

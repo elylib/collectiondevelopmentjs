@@ -1,3 +1,15 @@
+$(document).ready(function() {
+    var getFund = fund.getFundInfo($('#add_fund_code').val());
+
+    getFund.done(function(data) {
+        fund.createChart(data, document.getElementById('funds-chart'));
+        fund.showFundData(data, document.getElementById('fund-data'));
+        fund.showGoals(data, document.getElementById('goals'));
+    })
+    .fail(reporting.unexpectedError)
+    .always(hideSpinner);
+});
+
 $('#add_to_spreadsheet').submit(function(e) {
     e.preventDefault();
 
