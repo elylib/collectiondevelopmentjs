@@ -65,7 +65,7 @@ QUnit.module('Reporting', {
         this.data = {
             success: false,
             messages: ['This here is an error message']
-        }
+        };
     }
 });
 

@@ -301,3 +301,29 @@ var addItems = (function() {
     return {addToSheet: addToSheet,
             stripHyphensFromISBN: stripHyphensFromISBN};
 })();
+
+var spreadsheetOnlyButton = (function() {
+
+    var spreadhseetLocation = function() {
+        var iframeSrc;
+        $('iframe').each(function(index, value) {
+            var src = $(value).attr('src');
+            if (src) {
+                if (src.indexOf('docs.google') !== -1) {
+                    iframeSrc = src;
+                }
+            }
+        });
+        return iframeSrc;
+    };
+
+    var buttonText = function() {
+        return '<a href="'+spreadhseetLocation()+'" target="_blank"><div class="goToSpreadsheet">Go To Spreadsheet View</div></a>';
+    };
+
+    var makeButton = function(location) {
+        location.prepend(buttonText());
+    };
+
+    return {makeButton: makeButton};
+})();

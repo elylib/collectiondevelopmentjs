@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    spreadsheetOnlyButton.makeButton($('body'));
+
     var getFund = fund.getFundInfo($('#add_fund_code').val());
 
     getFund.done(function(data) {
