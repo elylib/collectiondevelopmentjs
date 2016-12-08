@@ -107,7 +107,7 @@ var reporting = (function() {
     };
 
     var reportSuccess = function() {
-        messageContainer.html('<p class="success-message">Your order has been sent for processing. It may take a few moments for changes to be reflected on your spreadsheet, especially for larger orders. Contact Ed if you don\'t notice a difference within a few minutes.</p>');
+        messageContainer.html('<p class="success-message">You request has been submitted. If you are submitting your sheet for purchase, you will receive an email in a few minutes indicating the process is complete.</p>');
         showMessageContainer();
     };
 
