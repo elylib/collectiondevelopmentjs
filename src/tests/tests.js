@@ -15,6 +15,7 @@ QUnit.test('Test ISBN format check', function(assert) {
     assert.ok(validation.isAnISBN('978-0123456789'));
     assert.ok(validation.isAnISBN('0123456789'));
     assert.ok(validation.isAnISBN('012345678X'));
+    assert.ok(validation.isAnISBN('9781433823060'));
     assert.ok(validation.isAnISBN('978-1-59711-382-3'));
     assert.notOk(validation.isAnISBN('123-123456789'), 'Doesn\'t start with 97[8|9]');
     assert.notOk(validation.isAnISBN('1234'), 'Too short');
