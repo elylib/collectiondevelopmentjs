@@ -107,7 +107,7 @@ var reporting = (function() {
     };
 
     var reportSuccess = function() {
-        messageContainer.html('<p class="success-message">The operation was successful</p>');
+        messageContainer.html('<p class="success-message">You request has been submitted. If you are submitting your sheet for purchase, you will receive an email in a few minutes indicating the process is complete.</p>');
         showMessageContainer();
     };
 

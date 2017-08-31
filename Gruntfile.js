@@ -29,7 +29,7 @@ module.exports = function(grunt) {
       },
       target: {
         files: {
-          'dist/collectiondevelopment.min.js': ['dist/concatted.js']
+          'dist/collectiondevelopment.js': ['dist/concatted.js']
         }
       }
     },
