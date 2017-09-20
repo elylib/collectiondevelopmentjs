@@ -11,6 +11,11 @@ QUnit.test('Test Amazon URL checker', function(assert) {
     assert.notOk(validation.notFromAmazon('amzn.com/anything'));
 });
 
+QUnit.test('Test Amazon URL is not a search results', function(assert) {
+    assert.ok(validation.isAnAmazonSearch('amazon.com/s/ref=anything'));        
+    assert.notOk(validation.isAnAmazonSearch('amazon.com/anything'));
+});
+
 QUnit.test('Test ISBN format check', function(assert) {
     assert.ok(validation.isAnISBN('978-0123456789'));
     assert.ok(validation.isAnISBN('0123456789'));
@@ -34,9 +39,11 @@ QUnit.test('Put validation together', function(assert) {
     assert.ok(validation.invalidEntry('google.com'), 'unsupported');
     assert.ok(validation.invalidEntry('029812X'), 'invalid ISBN');
     assert.ok(validation.invalidEntry('X'), 'invalid ISBN/unknown format');
+    assert.ok(validation.invalidEntry('amazon.com/s/ref=anything', 'Amazon search results'));
     assert.notOk(validation.invalidEntry('http://www.amazon.com/anything'), 'valid entry');
     assert.notOk(validation.invalidEntry('https://amzn.com/anything'), 'valid entry');
     assert.notOk(validation.invalidEntry('978-0123456789'), 'valid ISBN');
+    assert.notOk(validation.invalidEntry('amazon.com/anything'));
 });
 
 QUnit.module('Chart', {

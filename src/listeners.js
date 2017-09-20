@@ -6,7 +6,6 @@ $(document).ready(function() {
     getFund.done(function(data) {
         fund.createChart(data, document.getElementById('funds-chart'));
         fund.showFundData(data, document.getElementById('fund-data'));
-        fund.showGoals(data, document.getElementById('goals'));
     })
     .fail(reporting.unexpectedError)
     .always(hideSpinner);

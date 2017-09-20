@@ -11,7 +11,8 @@ var validation = (function() {
     var messages = {
         emptyField: '<p class="error-message">Please enter a valid URL or ISBN #</p>',
         notAnISBN: '<p class="error-message">That is not a valid ISBN. Please check for accuracy.</p>',
-        notRecognizedProvider: '<p class="error-message">The url entered is not from a recognized provider. Please check the instructions on the main page.</p>'
+        notRecognizedProvider: '<p class="error-message">The url entered is not from a recognized provider. Please check the instructions on the main page.</p>',
+	amazonSearch: '<p class="error-message">The URL you are attempting to use is for a search results page. Please use the URL from the item details page.</p>'
     };
 
     var empty = function(field) {
@@ -32,6 +33,18 @@ var validation = (function() {
         * @return {boolean} Whether the input is an Amazon address
         */
         return field.indexOf('amazon.com') === -1 && field.indexOf('amzn.com') === -1;
+    };
+
+    var isAnAmazonSearch = function(field) {
+	/**
+	* People sometimes, when a search only has a single result, lose track and
+        * want to use the search URL. We might as well catch this specific problem rather
+        * than trip to the server.
+        *
+        * @param {string} field  Input from the form field
+        * @return {boolean}  False if not a search results page, true if it is   
+	*/
+	return field.indexOf('amazon.com/s/ref') !== -1;
     };
 
     var isAnISBN = function(field) {
@@ -73,7 +86,9 @@ var validation = (function() {
             }
         } else if (notFromAmazon(field)) {
             invalid = messages.notRecognizedProvider;
-        }
+        } else if (isAnAmazonSearch(field)) {
+	    invalid = messages.amazonSearch;
+	}
         return invalid;
     };
 
@@ -82,7 +97,8 @@ var validation = (function() {
             empty: empty,
             isAnISBN: isAnISBN,
             invalidEntry: invalidEntry,
-            ISBNLike: ISBNLike};
+            ISBNLike: ISBNLike,
+	    isAnAmazonSearch: isAnAmazonSearch};
 })();
 
 var reporting = (function() {
@@ -245,14 +261,6 @@ var fund = (function () {
         });
     };
 
-    var setGoals = function(fundData) {
-        return '<h3>January Goal</h3><p>&#37;'+percentage(fundData.allocated, (fundData.expended + fundData.encumbered))+' of &#37;70</p>';
-    };
-
-    var showGoals = function(fundData, goals) {
-        goals.innerHTML = setGoals(fundData);
-    };
-
     var showFundData = function(fundData, fundInfo) {
         fundInfo.innerHTML = makeLabels(fundData);
     };
@@ -285,7 +293,7 @@ var addItems = (function() {
 
     var addToSheet = function(addForm) {
         return $.ajax({
-            url: 'https://collectiondevelopment-141220.appspot.com/add_to_spreadsheet/',
+            url: 'https://collectiondevelopment.herokuapp.com/add_to_spreadsheet',
             type: 'GET',
             data: addForm.serialize(),
             beforeSend: function() {
