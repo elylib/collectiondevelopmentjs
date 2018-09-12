@@ -34,13 +34,32 @@ module.exports = function(grunt) {
       }
     },
     concat: {
-      target: {
-        src: ['src/*.js'],
-        dest: 'dist/concatted.js'
+      prod: {
+        files: {
+          'dist/concatted.js': ['src/*.js']
+        }
+      },
+      staging: {
+        files: {
+	    'dist/concatted-staging.js': ['src/*.js']
+	}
       }
     },
     qunit: {
       all: ['src/tests/*.html']
+    },
+    'string-replace': {
+      dist: {
+        files: {
+          'dist/collectiondevelopment_staging.js': ['dist/concatted-staging.js']
+        }
+      },
+      options: {
+      replacements: [{
+        pattern: /collectiondevelopment.herokuapp/g,
+	replacement: 'collection-development-staging.herokuapp'
+	}]
+      }
     }
   });
 
@@ -49,8 +68,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-string-replace');
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'qunit', 'concat:prod', 'uglify']);
   grunt.registerTask('tests', ['qunit']);
-
+  grunt.registerTask('staging', ['jshint', 'qunit', 'concat:staging', 'string-replace']);
 };

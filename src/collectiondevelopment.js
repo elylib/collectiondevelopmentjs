@@ -104,6 +104,11 @@ var validation = (function() {
 var reporting = (function() {
     var messageContainer = $('#message-container');
 
+    var successSubmission = '<p class="success-message">You request has been submitted. You will receive an email in a few minutes indicating the process is complete.</p>';
+
+    var successAddItems = '<p class="success-message">Your item(s) have been added.</p>';
+    
+
     var reportErrors = function(data) {
         //Put errors on the page
         var errorMessages = buildErrorMessage(data);
@@ -122,8 +127,8 @@ var reporting = (function() {
         return errorMessages;
     };
 
-    var reportSuccess = function() {
-        messageContainer.html('<p class="success-message">You request has been submitted. If you are submitting your sheet for purchase, you will receive an email in a few minutes indicating the process is complete.</p>');
+    var reportSuccess = function(msg) {
+        messageContainer.html(msg);
         showMessageContainer();
     };
 
@@ -147,20 +152,29 @@ var reporting = (function() {
         messageContainer.addClass('hidden');
     };
 
-    var checkForSuccess = function(data) {
+    var checkForSuccessSubmission = function(data) {
         /**
         * Not all errors are treated as server errors, so we need to check a success value
         * 
         * @params {object} data Data returned from the server, must have 'success' and 'messages' elements
         */
         if (data.success) {
-            reportSuccess();
+            reportSuccess(successSubmission);
         } else {
             reportErrors(data);
         }
     };
 
-    return {checkForSuccess: checkForSuccess,
+    var checkForSuccessAddItems = function(data) {
+	if (data.success) {
+	    reportSuccess(successAddItems);
+	} else {
+	    reportErrors(data);
+	}
+    };
+    
+    return {checkForSuccessSubmission: checkForSuccessSubmission,
+	    checkForSuccessAddItems: checkForSuccessAddItems,
             unexpectedError: unexpectedError,
             showMessageContainer: showMessageContainer,
             hideMessageContainer: hideMessageContainer,
@@ -183,14 +197,13 @@ var fund = (function () {
     var displayOrder = ['remaining', 'expended', 'encumbered'];
 
 
-    var getFundInfo = function(fundCode) {
+    var getFundInfo = function(fundData) {
         return $.ajax({
             url: 'https://collectiondevelopment.herokuapp.com/get_fund',
-            type: 'GET',
+            method: 'POST',
+	    contentType: 'application/json',
             crossDomain: true,
-            data: {
-                'fund_code': fundCode
-            }
+            data: JSON.stringify(fundData)
         });
     };
 
@@ -267,7 +280,6 @@ var fund = (function () {
 
     return {
         createChart: createChart,
-        showGoals: showGoals,
         showFundData: showFundData,
         getFundInfo: getFundInfo,
         makeLabels: makeLabels
@@ -278,8 +290,9 @@ var orderSubmission = (function() {
     var submitOrder = function(submitForm) {
         return $.ajax({
             url: 'https://collectiondevelopment.herokuapp.com/submit_order',
-            type: 'GET',
-            data: submitForm.serialize(),
+	    contentType: 'application/json',
+            method: 'POST',
+            data: JSON.stringify(submitForm),
             beforeSend: function() {
                 showSpinner();
             }
@@ -294,8 +307,9 @@ var addItems = (function() {
     var addToSheet = function(addForm) {
         return $.ajax({
             url: 'https://collectiondevelopment.herokuapp.com/add_to_spreadsheet',
-            type: 'GET',
-            data: addForm.serialize(),
+	    contentType: 'application/json',
+            method: 'POST',
+            data: JSON.stringify(addForm),
             beforeSend: function() {
                 showSpinner();
             }
