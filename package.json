@@ -2,7 +2,7 @@
   "name": "collectiondevelopment",
   "version": "0.1.0",
   "devDependencies": {
-    "grunt": "~1.0.1",
+    "grunt": "^1.0.4",
     "grunt-contrib-concat": "~1.0.1",
     "grunt-contrib-jshint": "~1.0.0",
     "grunt-contrib-qunit": "~1.2.0",

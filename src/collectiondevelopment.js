@@ -135,8 +135,8 @@ var reporting = (function() {
     var unexpectedError = function() {
         // When server returns a 500
         var message = '<p class="error-message">An unexpected error has occurred, '+
-                      'Ed has been notified. Please email '+
-                      'chill@westfield.ma.edu with information '+
+                      'Ian has been notified. Please email '+
+                      'imatzen@westfield.ma.edu with information '+
                       'about what you were trying to do including ' +
                       'any URLs you were trying to import.</p>';
         messageContainer.html(message);
