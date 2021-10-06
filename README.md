@@ -1,4 +1,10 @@
-# Collection Development Javascript
+# DEPRECATED
+
+This repository is no longer supported, please consider using the GOBI service instead.
+
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+## Collection Development Javascript
 
 This JS helps with the user interface of the collection development spreadsheets while the Python collectiondevelopment depo provides the back end.
 
